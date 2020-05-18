@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>SUFS File Directory</title>
+    <link rel="stylesheet" type="text/css" href="/static/styles.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="/static/jquery-3.4.1.js" type="text/javascript"></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/90312fa36f.js" crossorigin="anonymous"></script>
+    <link rel="shortcut icon" href="/static/media/favicon.ico">
+	<link rel="icon" type="image/gif" href="/static/media/animated_favicon1.gif">
+  </head>
+  <body>
+    <div class="main-block">
+       <div class="directory showbox">
+			<h1 class="font-weight-light blue">File Directory</h1>
+			<form class="addFileForm">
+				<div class="form-group">
+				  <label for="sel1"><b>S3 bucket:</b></label>
+				  <select class="form-control" id="s3_items">
+				  	<option>Select a file</option>
+				  	{% if objs %}
+				  		{% for ob in objs %}
+						    <option>{{ ob }}</option>
+						{% endfor %}
+				    {% endif %}
+				  </select>
+				  <input type="submit" value="Submit" class="btn btn-primary btn-sm">
+				</div>
+			</form>
+
+			<form class="addFolderForm">
+				<input type="text" placeholder="Folder Name?" name="folder" class="newfolder" autocomplete="off" required>
+				<input type="submit" value="Submit" class="btn btn-primary btn-sm">
+			</form>
+			
+			<div class="">
+				<p><b><i class="fas fa-folder-open"></i>  
+				<font color="grey">Root Folder</font> 
+				Path: </b>
+				<select name="folder_select" class="btn btn-mini">
+					<option>Action</option>
+					<option value="" >Create Folder</option>
+				    <option value="">Store File</option>
+				</select>
+				</p>
+			</div>
+			{% if contents %}
+				{% for item in contents %}
+					{% if item['Type'] == 'folder' %}
+					<div class="">
+						<p><b><i class="fas fa-folder-open"></i>  
+						<font color="grey"> {{ item['Name'] }} </font> 
+						Path: </b>{{ item['Path'] }}
+						<select name="folder_select" class="btn btn-mini">
+							<option>Action</option>
+							<option value={{ item['Path'] }}>Create Folder</option>
+						    <option value={{ item['Path'] }}>Remove Folder</option>
+						    <option value={{ item['Path'] }}>Store File</option>
+						</select>
+						</p>
+					</div>
+					{% else %}
+					<div class="">
+						<p><b><i class="fas fa-file"></i>  
+						<font color="skyblue"> {{ item['Name'] }} </font> 
+						Path: </b>{{ item['Path'] }}
+						<select name="file_select" class="btn btn-mini">
+							<option>Action</option>
+						    <option value={{ item['Path'] }}>Download File</option>
+						    <option value={{ item['Path'] }}>Remove File</option>
+						</select>
+						</p>
+					</div>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+		</div>
+	</div>
+
+  <script type="text/javascript">
+$(document).ready(function(){
+	$('.addFileForm').hide();
+	$('.addFolderForm').hide();
+	
+  	$('.btn-mini').change(function(e) {
+  		$('.addFileForm').hide();
+		$('.addFolderForm').hide();
+
+	    var $option = $(this).find('option:selected');
+
+	    var value = $option.val(); // path
+	    var text = $option.text(); // action
+
+		if (text == 'Create Folder') {
+	        e.preventDefault();
+
+	        $('.addFolderForm').show();
+
+	        $('.addFolderForm').submit(function(e) {
+	        	e.preventDefault();
+
+	        	$.ajax({
+		            type: 'post',
+		            url: '/directory/folder/',
+		            data: {
+		            	'foldername': $('.newfolder').val(),
+		            	'folderpath': value
+					},
+		            dataType: "json",
+		            success: function (data) {
+		                console.log('Submission was successful.');
+		                console.log(data);
+		                location.reload(); // refresh page to see the change
+		            },
+		            error: function (data) {
+		                console.log('An error occurred.');
+		                console.log(data);
+		            }
+		        })
+	        });     
+		};
+
+		if (text == 'Remove Folder') {
+		    e.preventDefault();
+
+        	$.ajax({
+	            type: 'delete',
+	            url: '/directory/folder/',
+	            data: {
+	            	'folderpath': value
+				},
+	            dataType: "json",
+	            success: function (data) {
+	                console.log('Submission was successful.');
+	                console.log(data);
+	                location.reload(); // refresh page to see the change
+	            },
+	            error: function (data) {
+	                console.log('An error occurred.');
+	                console.log(data);
+	            }
+	        })
+		};
+
+		if (text == 'Store File') {
+			e.preventDefault();
+
+			$('.addFileForm').show();
+
+			$('#s3_items').change(function(e) {
+				e.preventDefault();
+
+			    var $option = $(this).find('option:selected');
+			    var text = $option.text(); // filename
+			    console.log(text)
+
+			    $('.addFileForm').submit(function(e) {
+					e.preventDefault();
+
+				    $.ajax({
+			            type: 'post',
+			            url: '/directory/filestorage/',
+			            data: {
+			            	'filename': text,
+			            	'filepath': value
+						},
+			            dataType: "json",
+			            success: function (data) {
+			                console.log('Submission was successful.');
+			                console.log(data);
+			                location.reload(); // refresh page to see the change
+			            },
+			            error: function (data) {
+			                console.log('An error occurred.');
+			                console.log(data);
+			            }
+			        })
+				});
+			});			
+		};
+
+		if (text == 'Download File') {
+			e.preventDefault();
+
+        	$.ajax({
+	            type: 'post',
+	            url: '/directory/file/',
+	            data: {
+	            	'filepath': value
+				},
+	            dataType: "json",
+	            success: function (data) {
+	                console.log('Submission was successful.');
+	                console.log(data);
+	                location.reload(); // refresh page to see the change
+	            },
+	            error: function (data) {
+	                console.log('An error occurred.');
+	                console.log(data);
+	            }
+	        })
+		};
+
+		if (text == 'Remove File') {
+			e.preventDefault();
+
+        	$.ajax({
+	            type: 'delete',
+	            url: '/directory/filetrashcan/',
+	            data: {
+	            	'filepath': value
+				},
+	            dataType: "json",
+	            success: function (data) {
+	                console.log('Submission was successful.');
+	                console.log(data);
+	                location.reload(); // refresh page to see the change
+	            },
+	            error: function (data) {
+	                console.log('An error occurred.');
+	                console.log(data);
+	            }
+	        })
+		};
+
+	});
+
+ });
+  </script>
+
+  </body>
+
+</html>

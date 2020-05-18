@@ -1,0 +1,148 @@
+
+.cnt-1 {
+      margin-top: 100px;
+}
+html, body {
+      min-height: 100%;
+}
+body, div, .showbox, input, select, p { 
+      padding: 0;
+      margin: 0;
+      outline: none;
+      font-family: Roboto, Arial, sans-serif;
+      font-size: 16px;
+      color: #eee;
+}
+body {
+      background: url("../static/media/campus.jpg") no-repeat center;
+      background-size: cover;
+}
+h1, h2 {
+      font-weight: 400;
+}
+h2 {
+      margin: 0 0 0 8px;
+}
+.main-block {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      padding: 25px;
+      background: rgba(0, 0, 0, 0.5); 
+}
+.left-part, .showbox {
+      padding: 25px;
+}
+.showbox { 
+      margin-left: 75px;
+      margin-right: 55px;
+/*      padding-left: 50px;
+      padding-right: 50px;*/
+}
+.grey {
+      padding-left: 35px; 
+      color: grey;
+}
+.blue {
+      color: lightblue;
+      /*text-align: center;*/
+}
+.left-part {
+      text-align: center;
+}
+.fa-cloud {
+      font-size: 72px;
+}
+.showbox {
+      background: rgba(0, 0, 0, 0.7); 
+}
+.title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+}
+input, select {
+      padding: 5px;
+      margin-bottom: 30px;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid #eee;
+}
+input::placeholder {
+      color: #eee;
+}
+option:focus {
+      border: none;
+}
+option {
+      background: black; 
+      border: none;
+}
+.checkbox input {
+      margin: 0 10px 0 0;
+      vertical-align: middle;
+}
+.checkbox a {
+      color: #26a9e0;
+}
+.checkbox a:hover {
+      color: #85d6de;
+}
+
+.btn {
+  border: none;
+  padding: 4px 14px;
+  border-radius: 12px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  margin: 4px 2px;
+  transition-duration: 0.4s;
+  cursor: pointer;
+  background-color: #a6a6a6;
+  color: black;
+  border: 2px solid #555555;
+}
+
+.btn:hover {
+  background-color: #555555;
+  color: #a6a6a6;
+}
+
+.home-button {
+      padding: 10px 5px;
+      margin-top: 20px;
+      border-radius: 5px; 
+      border: none;
+      background: #26a9e0; 
+      text-decoration: none;
+      font-size: 15px;
+      font-weight: 400;
+      color: #fff;
+}
+.home-button {
+      display: inline-block;
+      margin: 20px 5px 0;
+}
+.home-button {
+      width: 100%;
+}
+.home-button:hover, .btn-item:hover {
+      background: #85d6de;
+}
+
+@media (min-width: 568px) {
+      html, body {
+      height: 100%;
+}
+.main-block {
+      flex-direction: row;
+      height: calc(100% - 50px);
+}
+.left-part, .showbox {
+      flex: 1;
+      height: auto;
+}
